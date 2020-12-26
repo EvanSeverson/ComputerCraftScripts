@@ -1,3 +1,7 @@
+local xJobSize = 6
+local yJobSize = 6
+local zJobSize = 6
+
 function GetTableLng(tbl)
   local getN = 0
   for n in pairs(tbl) do
@@ -36,19 +40,19 @@ rednet.broadcast("start")
 
 local active_turtles = {}
 
-for i=xmin,xmax,1
+for i=ymax,ymin,-yJobSize
 do
-        for j=ymax,ymin,-1
+        for j=xmin,xmax,xJobSize
         do
-                for k=zmin,zmax,1
+                for k=zmin,zmax,zJobSize
                 do
                         local senderId, message, protocol = rednet.receive()
                         if (message == "request_job")
                         then
-                                print("sending "..i..","..j..","..k.." to "..senderId)
+                                print("sending "..j..","..i..","..k.." to "..senderId)
                                 rednet.send(senderId, "not_done", "is_done")
-                                rednet.send(senderId, i, "jobx")
-                                rednet.send(senderId, j, "joby")
+                                rednet.send(senderId, j, "jobx")
+                                rednet.send(senderId, i, "joby")
                                 rednet.send(senderId, k, "jobz")
 
                                 active_turtles[senderId] = true

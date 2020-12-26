@@ -223,7 +223,10 @@ end
 
 function doJob(x, y, z)
 	turtle.refuel()
-	go(x, y, z)
+	go(x, y + 1, z)
+	setDir(0)
+	shell.run("quarry 6 6 6")
+	go(homeX, homeY, homeZ)
 end
 
 
@@ -270,6 +273,5 @@ do
 
                 doJob(jobx, joby, jobz)
         end
-	go(homeX, homeY, homeZ)
 end
 

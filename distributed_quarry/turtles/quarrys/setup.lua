@@ -1,0 +1,11 @@
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/checkFuel.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/drop.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/go.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/move.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/suck.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/turn.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/quarrys/handle.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/quarrys/quarry.lua")
+shell.run("wget https://raw.githubusercontent.com/EvanSeverson/ComputerCraftScripts/evan-experimental/distributed_quarry/turtles/quarrys/startup.lua")
+
+os.reboot()
