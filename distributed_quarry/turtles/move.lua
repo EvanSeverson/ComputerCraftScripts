@@ -1,7 +1,7 @@
 local M = {}
 
 fuel = require("checkFuel")
-handle = require("handle")
+handleIt = require("handle")
 
 function tryForward()
 	checkFuel()

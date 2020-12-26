@@ -3,12 +3,18 @@ local H = {}
 function handle(param)
 	if param == nil
 	then
-		return turtle.dig()
+		turtle.dig()
+		return true
 	elseif param == "up"
-		return turtle.digUp()
+	then
+		turtle.digUp()
+		return true
 	elseif param == "down"
-		return turtle.digDown()
-	else
-		return false
+	then
+		turtle.digDown()
+		return true
 	end
+	return false
 end
+
+return H
