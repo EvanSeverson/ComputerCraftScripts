@@ -52,6 +52,7 @@ do
                                 rednet.send(senderId, k, "jobz")
 
                                 active_turtles[senderId] = true
+				sleep(0.5)
                         end
                 end
         end
