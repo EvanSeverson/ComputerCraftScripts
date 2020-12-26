@@ -1,7 +1,16 @@
 local H = {}
 
 function handle(param)
-	if param == nil
+
+	local periph = peripheral.wrap(param)
+
+	if periph ~= nil
+	then
+		turtle.turnLeft()
+		return true
+	end
+
+	if param == "front"
 	then
 		turtle.dig()
 		return true

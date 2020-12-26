@@ -1,5 +1,4 @@
 moves = require("move")
-fuel = require("checkFuel")
 
 for n = 0,3,1
 do
