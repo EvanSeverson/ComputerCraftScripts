@@ -3,6 +3,7 @@ local M = {}
 handleIt = require("handle")
 
 function tryForward()
+	sleep(0.01)
 	if turtle.getFuelLevel() == 0
 	then
 		return false

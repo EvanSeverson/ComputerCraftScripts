@@ -1,5 +1,7 @@
 local homeX,homeY,homeZ = gps.locate()
 
+print("calculate home as " .. homeX .. "," .. homeY .. "," .. homeZ)
+
 local staleDir = true
 local currentDir = 0;
 
@@ -20,6 +22,7 @@ function fwd()
 		local xDir = x - lastX
 		if (xDir ~= 0 or zDir ~= 0) then
 			currentDir = math.abs(zDir) * (zDir + 1) + math.abs(xDir) * (xDir + 2)
+			print("calculated direction as " .. currentDir)
 			staleDir = false
 			return true
 		end
@@ -146,6 +149,8 @@ end
 function go(x, y, z)
 	local curX, curY, curZ = gps.locate()
 
+	print("going to " .. x .. "," .. y .. "," .. z .. " from " .. curX .. "," .. curY .. "," .. curZ)
+
 	if (curY == homeY) then
 		if (not up()) then
 			if (not down()) then
@@ -229,49 +234,79 @@ function doJob(x, y, z)
 	go(homeX, homeY, homeZ)
 end
 
+function listenForControls()
+	 while (true) do
+                local serverId = 0
+                while (true) do
+			print("ready to receive your mom")
+                        local senderId, message, protocol = rednet.receive()
 
-local serverId = 0;
-while (true)
-do
-        -- Wait for the signal to start
-        print("Waiting for the start signal")
-        while (true)
-                do
-                rednet.open("left")
-                local senderId, message, protocol = rednet.receive()
-
-                if (message == "start")
-                then
-			serverId = senderId
-                        break;
+			print("got a message: " .. message)
+                        if (message == "stop") then
+                                local handle = fs.open("home", "w")
+				handle.writeLine(homeX)
+				handle.writeLine(homeY)
+				handle.writeLine(homeZ)
+				handle.close()
+				os.reboot()
+                                break;
+                        end
                 end
-        end
-
-        -- Keep polling until the signal to stop
-        while (true)
-        do
-                rednet.open("left")
-		local is_done = nil
-		while (is_done == nil) do
-			print("polling for a job")
-                	rednet.send(serverId, "request_job")
-                	is_done = select(2, rednet.receive("is_done", 0.5))
-
-		end
-                if (is_done == "done")
-                then
-                        print("received the done signal")
-                        break;
-                end
-                local jobx = select(2,rednet.receive("jobx"))
-                local joby = select(2,rednet.receive("joby"))
-                local jobz = select(2,rednet.receive("jobz"))
-
-                rednet.close("left")
-
-                print("Received job at "..jobx..","..joby..","..jobz)
-
-                doJob(jobx, joby, jobz)
-        end
+	end
 end
 
+function waitForJobs()
+        -- Wait for the signal to start
+        print("Waiting for the start signal")
+	while (true) do
+		local serverId = 0
+	        while (true) do
+	                local senderId, message, protocol = rednet.receive()
+	
+			print("got a message2: " .. message)
+	                if (message == "start") then
+	                        serverId = senderId
+	                        break;
+	                end
+	        end
+	
+	        -- Keep polling until the signal to stop
+	        while (true) do
+	                rednet.open("left")
+	                local is_done = nil
+	                while (is_done == nil) do
+	                        print("polling for a job")
+	                        rednet.send(serverId, "request_job")
+	                        is_done = select(2, rednet.receive("is_done", 0.5))
+	
+	                end
+	                if (is_done == "done")
+	                then
+	                        print("received the done signal")
+	                        break;
+	                end
+	                local jobx = select(2,rednet.receive("jobx"))
+	                local joby = select(2,rednet.receive("joby"))
+	                local jobz = select(2,rednet.receive("jobz"))
+	
+	                rednet.close("left")
+	
+	                print("Received job at "..jobx..","..joby..","..jobz)
+	
+	                doJob(jobx, joby, jobz)
+	        end
+	end
+end
+
+rednet.open("left")
+
+if (fs.exists("home")) then
+	print("returning home")
+	local handle = fs.open("home", "r")
+	homeX = tonumber(handle.readLine())
+	homeY = tonumber(handle.readLine())
+	homeZ = tonumber(handle.readLine())
+	go(homeX, homeY, homeZ)
+end
+
+parallel.waitForAll(listenForControls, waitForJobs)
