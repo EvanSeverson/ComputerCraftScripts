@@ -1,13 +1,15 @@
 local M = {}
 
-fuel = require("checkFuel")
 handleIt = require("handle")
 
 function tryForward()
-	checkFuel()
+	if turtle.getFuelLevel() == 0
+	then
+		return false
+	end
 	while not turtle.forward()
 	do
-		if not handle()
+		if not handle("front")
 		then
 			break
 		end
@@ -15,7 +17,10 @@ function tryForward()
 end
 
 function tryUp()
-	checkFuel()
+	if turtle.getFuelLevel() == 0
+	then
+		return false
+	end
 	while not turtle.up()
 	do
 		if not handle("up")
@@ -26,7 +31,10 @@ function tryUp()
 end
 
 function tryDown()
-	checkFuel()
+	if turtle.getFuelLevel() == 0
+	then
+		return false
+	end
 	while not turtle.down()
 	do
 		if not handle("down")

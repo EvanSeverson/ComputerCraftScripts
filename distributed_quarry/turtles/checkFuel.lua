@@ -1,23 +1,16 @@
 local C = {}
 
-function nearestRefuel()
-	
-	return pos
-end
-
 function checkFuel()
 	if turtle.getFuelLevel() <= turtle.getFuelLimit()/10
 	then
-		attempt = 0
+		attempt = 1
 		while not turtle.refuel()
 		do
 			turtle.select(attempt)
-			turtle.refuel()
 			attempt = attempt+1
-			if attempt == 15
+			if attempt == 17
 			then
-				attempt = 0
-				--requestFuel()
+				attempt = 1
 				--getFuel()
 				break
 			end
