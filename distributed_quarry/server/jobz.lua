@@ -1,10 +1,14 @@
+require("split")
+
 function GetTableLng(tbl)
-  local getN = 0
-  for n in pairs(tbl) do
-    getN = getN + 1
-  end
-  return getN
+	local getN = 0
+	for n in pairs(tbl) do
+		getN = getN + 1
+	end
+	return getN
 end
+
+
 
 print("please enter the coordiantes of one corner.")
 io.write("x: ")
@@ -34,38 +38,8 @@ local zmax = math.max(z1, z2)
 rednet.open("left")
 rednet.broadcast("start")
 
-local active_turtles = {}
+local totalTurtles = tonumber(arg[1])
+local numberOfJobTrips = 3
 
-for i=xmin,xmax,1
-do
-        for j=ymax,ymin,-1
-        do
-                for k=zmin,zmax,1
-                do
-                        local senderId, message, protocol = rednet.receive()
-                        if (message == "request_job")
-                        then
-                                print("sending "..i..","..j..","..k.." to "..senderId)
-                                rednet.send(senderId, "not_done", "is_done")
-                                rednet.send(senderId, i, "jobx")
-                                rednet.send(senderId, j, "joby")
-                                rednet.send(senderId, k, "jobz")
-
-                                active_turtles[senderId] = true
-                        end
-                end
-        end
-end
-
-local inactive_turtles = {}
-while (GetTableLng(active_turtles) > GetTableLng(inactive_turtles))
-do
-        local senderId, message, protocol = rednet.receive()
-        if (message == "request_job")
-        then
-                print("sending done signal to " .. senderId)
-                rednet.send(senderId, "done", "is_done")
-                inactive_turtles[senderId] = true
-        end
-end
-
+local xSectDims,ySectDims,zSectDims = splitVol(xmax-xmin,ymax-ymin,zmax-zmin,totalTurtles)
+local xSectDims2,ySectDims2,zSectDims2 = splitVol(xSectDims,ySectDims,zSectDims,numberOfJobTrips)

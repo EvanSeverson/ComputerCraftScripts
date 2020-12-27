@@ -15,16 +15,16 @@ orient = 0
 
 tryDown()
 
-for k = 0,arg[3]-1,1
+for k = 0,arg[2]-1,1
 do
-	for l = 0,arg[2]-1,1
+	for l = 0,arg[3]-1,1
 	do
 		for m = 0,arg[1]-2,1
 		do
 			tryForward()
 		end
 
-		if l < arg[2]-1
+		if l < arg[3]-1
 		then
 			if orient == 2*(k%2)
 			then
@@ -40,7 +40,7 @@ do
 			end
 		end
 	end
-	if k ~= arg[3]-1
+	if k ~= arg[2]-1
 	then
 		tryDown()
 		turtle.turnLeft()
