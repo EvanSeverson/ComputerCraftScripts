@@ -7,17 +7,17 @@ do
 	while (selected == false)
 	do
 		rednet.open("left")
-		local senderID, message, protocol = rednet.receive()
+		local senderID, message, protocol = rednet.receive("quarry_job")
 
 		if (message == "start")
 		then
 			serverID = senderID
 			rednet.send(serverID,"volunteer")
 
-			local senderID, is_selected, protocol = rednet.receive("is_selected",10)
+			local senderID, is_selected, protocol = rednet.receive("is_selected",1)
 			if senderID ~= nil and is_selected ~=nil and senderID == serverID and is_selected == "selected"
 			then
-				selected == true
+				selected = true
 			end
 		end
 	end
@@ -33,12 +33,11 @@ do
 			print("received the done signal")
 			break
 		end
-		local jobPos = select(2,rednet.receive("jobPos"))
-		local jobDim = select(2,rednet.receive("jobDim"))
+		local jobInst = select(2,rednet.receive("send_job"))
 
 		rednet.close("left")
 
-		print("Received job at "..jobPos)
+		print("Received job: at "..jobInst)
 
 		sleep(1) -- simulate working on the job for 5 seconds
 	end

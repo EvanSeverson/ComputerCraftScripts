@@ -26,9 +26,6 @@ local ymax = math.max(y1, y2)
 local zmin = math.min(z1, z2)
 local zmax = math.max(z1, z2)
 
-rednet.open("left")
-rednet.broadcast("start")
-
 local totalTurtles = tonumber(arg[1])
 
 pos = {xmin,ymin,zmin}
@@ -54,18 +51,24 @@ end
 
 local turtles = {}
 
+rednet.open("left")
+
+print("Searching for volunteers...")
 while #turtles < totalTurtles
 do
+	rednet.broadcast("start","quarry_job")
 	local senderID, message, protocol = rednet.receive()
 	if message == "volunteer"
 	then
 		table.insert(turtles,{senderID,1,true})
 		rednet.send(senderID,"selected","is_selected")
+		print("Received volunteer! ("..#turtles.."/"..totalTurtles..")")
 	end
 
 end
+print("All volunteers found!")
+print("Beginning jobs...")
 
-for
 
 numberDone = 0
 jobFinished = false
@@ -91,10 +94,11 @@ do
 						jobFinished = true
 					end
 				end
-				rednet.send(senderID,"done","is_done")
+				rednet.send(senderID,"not_done","is_done")
 
 				sPos = "{"..jobs[m][nextJob][1][1]..","..jobs[m][nextJob][1][2]..","..jobs[m][nextJob][1][3].."}"
 				sDim = "{"..jobs[m][nextJob][2][1]..","..jobs[m][nextJob][2][2]..","..jobs[m][nextJob][2][3].."}"
+				print("Sending job pos "..sPos.." and dimensions "..sDim.." to "..senderID)
 				rednet.send(senderID,sPos.." "..sDim,"send_job")
 				break
 			end
