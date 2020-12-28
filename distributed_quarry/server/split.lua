@@ -60,7 +60,7 @@ end
 
 function splitVol(pos,dims,sections)
 
-	print(pos[1],pos[2],pos[3])
+	-- print(pos[1],pos[2],pos[3])
 	for n = 1,#dims,1
 	do
 		if dims[n] == 0 then return {} end
@@ -76,19 +76,19 @@ function splitVol(pos,dims,sections)
 			break
 		end
 	end
-
+	-- print(sections)
 	local bad = false
 	local splitPoint, sections1 = findSplit(maxDim,remain,sections)
-	print(splitPoint, sections1)
+	-- print(splitPoint, sections1)
 	if splitPoint == nil
 	then
-		splitPoint = math.floor(maxDim/2)
+		splitPoint = math.ceil(maxDim/2)
 		sections1 = math.floor(sections/2)
 		bad = true
-		print("This is bad.")
+		-- print("This is bad.")
 		return
 	end
-	print(sections,sections1)
+	-- print(sections,sections1)
 	-- print(pos[1],pos[2],pos[3])
 	local dimz1 = {dims[1],dims[2],dims[3]}
 	local dimz2 = {dims[1],dims[2],dims[3]}
@@ -120,16 +120,16 @@ function splitVol(pos,dims,sections)
 	return t1
 end
 
-local jobs = splitVol({0,0,0},{25,20,53},60)
-
-print(#jobs)
-
-for k = 1,#jobs,1
-do
-	print("job: " .. k)
-	print(jobs[k][1][1],jobs[k][1][2],jobs[k][1][3])
-	print(jobs[k][2][1],jobs[k][2][2],jobs[k][2][3])
-	print("Volume: " .. jobs[k][2][1]*jobs[k][2][2]*jobs[k][2][3])
-end
+-- local jobs = splitVol({0,0,0},{25,20,53},60)
+--
+-- print(#jobs)
+--
+-- for k = 1,#jobs,1
+-- do
+-- 	print("job: " .. k)
+-- 	print(jobs[k][1][1],jobs[k][1][2],jobs[k][1][3])
+-- 	print(jobs[k][2][1],jobs[k][2][2],jobs[k][2][3])
+-- 	print("Volume: " .. jobs[k][2][1]*jobs[k][2][2]*jobs[k][2][3])
+-- end
 
 return S

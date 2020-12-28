@@ -1,14 +1,5 @@
 require("split")
 
-function GetTableLng(tbl)
-	local getN = 0
-	for n in pairs(tbl) do
-		getN = getN + 1
-	end
-	return getN
-end
-
-
 
 print("please enter the coordiantes of one corner.")
 io.write("x: ")
@@ -39,7 +30,74 @@ rednet.open("left")
 rednet.broadcast("start")
 
 local totalTurtles = tonumber(arg[1])
-local numberOfJobTrips = 3
 
-local xSectDims,ySectDims,zSectDims = splitVol(xmax-xmin,ymax-ymin,zmax-zmin,totalTurtles)
-local xSectDims2,ySectDims2,zSectDims2 = splitVol(xSectDims,ySectDims,zSectDims,numberOfJobTrips)
+pos = {xmin,ymin,zmin}
+dims = {xmax-xmin,ymax-ymin,zmax-zmin}
+
+local jobs = splitVol(pos,dims,totalTurtles)
+
+max = jobs[1][2][1]*jobs[1][2][2]*jobs[1][2][3]
+for m = 1,#jobs
+do
+	if max < jobs[m][2][1]*jobs[m][2][2]*jobs[m][2][3]
+	then
+		max = jobs[m][2][1]*jobs[m][2][2]*jobs[m][2][3]
+	end
+end
+
+local numberOfJobs = math.ceil(max/(6*6*6))
+
+for m = 1,#jobs
+do
+	jobs[m] = splitVol(jobs[m][1],jobs[m][2],numberOfJobs)
+end
+
+local turtles = {}
+
+while #turtles < totalTurtles
+do
+	local senderID, message, protocol = rednet.receive()
+	if message == "volunteer"
+	then
+		table.insert(turtles,{senderID,1,true})
+		rednet.send(senderID,"selected","is_selected")
+	end
+
+end
+
+for
+
+numberDone = 0
+jobFinished = false
+
+while not jobFinished
+do
+	local senderID, message, protocol = rednet.receive()
+	if message == "request_job"
+	then
+		for m = 1,#turtles,1
+		do
+			if turtles[m][1] == senderID
+			then
+				nextJob = turtles[m][2]
+				turtles[m][2] = turtles[m][2] + 1
+				if turtles[m][2] > numberOfJobs
+				then
+					turtles[m][3] = false
+					rednet.send(senderID,"done","is_done")
+					numberDone = numberDone + 1
+					if numberDone == #turtles
+					then
+						jobFinished = true
+					end
+				end
+				rednet.send(senderID,"done","is_done")
+
+				sPos = "{"..jobs[m][nextJob][1][1]..","..jobs[m][nextJob][1][2]..","..jobs[m][nextJob][1][3].."}"
+				sDim = "{"..jobs[m][nextJob][2][1]..","..jobs[m][nextJob][2][2]..","..jobs[m][nextJob][2][3].."}"
+				rednet.send(senderID,sPos.." "..sDim,"send_job")
+				break
+			end
+		end
+	end
+end
