@@ -1,91 +1,135 @@
 local S = {}
 
-function splitVol(xDim,yDim,zDim,sections)
-	local factors = factor(sections)
-	for n = 1,#factors,1
-	do
-		print(factors[n])
-	end
-	X = {"x",xDim}
-	Y = {"y",yDim}
-	Z = {"z",zDim}
 
-	Dims = {X,Y,Z}
 
-	for m = 1,3,1
-	do
-		mindex = m
-		for n = m+1,3,1
-		do
-			if Dims[mindex][2] > Dims[n][2]
-			then
-				mindex = n
+local function splitNice(pos,dims,sections)
+	local m = sections
+	local bins = {1,1,1}
+
+	local p = 2
+	while m > 1 do
+		for i = 1,3,1 do
+			while m % p == 0 and dims[i] % p == 0 do
+				bins[i] = p * bins[i]
+				m = m / p
+				dims[i] = dims[i] / p
 			end
 		end
-		Dims[m], Dims[mindex] = Dims[mindex], Dims[m]
+		p = p + 1
 	end
-	factorX = 1
-	factorY = 1
-	factorZ = 1
-	for m = 1,#factors,1
+
+	t1 = {}
+	for i = 1,bins[1],1
 	do
-		if factors[#factors-m+1] == nil
-		then
-			factors[#factors-m+1] = 1
-		end
-
-		if Dims[(#Dims-m)%3+1][1] == "x"
-		then
-			factorX = factorX*factors[#factors-m+1]
-		elseif Dims[(#Dims-m)%3+1][1] == "y"
-		then
-			factorY = factorY*factors[#factors-m+1]
-		elseif Dims[(#Dims-m)%3+1][1] == "z"
-		then
-			factorZ = factorZ*factors[#factors-m+1]
+		for j = 1,bins[2],1
+		do
+			for k = 1,bins[3],1
+			do
+				xPos = pos[1] + (i-1)*dims[1]
+				yPos = pos[2] + (j-1)*dims[2]
+				zPos = pos[3] + (k-1)*dims[3]
+				table.insert(t1,{{xPos,yPos,zPos},dims})
+			end
 		end
 	end
 
-	return X[2]/factorX,Y[2]/factorY,Z[2]/factorZ
+	return t1
 end
 
-function factor(n)
-	local a = {}
-	while n%2 == 0
+local function findSplit(maxDim,remain,sections)
+	local ratio = sections/maxDim
+
+	for n = maxDim,1,-1
 	do
-		table.insert(a,2)
-		n = n/2
-	end
-	local f = 3
-	while f*f <= n
-	do
-		if n%f == 0
-		then
-			table.insert(a,math.floor(f))
-			n = n/f
-		else
-			f = f+2
+		local m = math.floor(ratio * n)
+		for j = 0,1,1
+		do
+			m2 = m-j
+			if m2 ~= 0 and n*remain[1]*remain[2]%m2 == 0
+			then
+				return n, m2
+			end
+			m2 = m + j
+			if m2 ~= 0 and n*remain[1]*remain[2]%m2 == 0
+			then
+				return n, m2
+			end
 		end
 	end
-	if n ~= 1
+end
+
+function splitVol(pos,dims,sections)
+
+	print(pos[1],pos[2],pos[3])
+	for n = 1,#dims,1
+	do
+		if dims[n] == 0 then return {} end
+	end
+
+	local maxDim = math.max(dims[1],dims[2],dims[3])
+	local remain = {dims[1],dims[2],dims[3]}
+	for m = 1,#dims,1
+	do
+		if remain[m] == maxDim
+		then
+			table.remove(remain,m)
+			break
+		end
+	end
+
+	local bad = false
+	local splitPoint, sections1 = findSplit(maxDim,remain,sections)
+	print(splitPoint, sections1)
+	if splitPoint == nil
 	then
-		table.insert(a,math.floor(n))
+		splitPoint = math.floor(maxDim/2)
+		sections1 = math.floor(sections/2)
+		bad = true
+		print("This is bad.")
+		return
 	end
-	return a
+	print(sections,sections1)
+	-- print(pos[1],pos[2],pos[3])
+	local dimz1 = {dims[1],dims[2],dims[3]}
+	local dimz2 = {dims[1],dims[2],dims[3]}
+	local pos2 = {pos[1],pos[2],pos[3]}
+	for m = 1,#dims,1
+	do
+		if dims[m] == maxDim
+		then
+			dimz1[m] = splitPoint
+			dimz2[m] = dims[m]-splitPoint
+			pos2[m] = pos[m]+splitPoint
+		end
+	end
+
+	local t1 = {}
+	if bad == true
+	then
+		t1 = splitVol(pos,dimz1,sections1)
+	else
+		t1 = splitNice(pos,dimz1,sections1)
+	end
+	local t2 = splitVol(pos2,dimz2,sections-sections1)
+	local lenT1 = #t1
+	for n = 1,#t2,1
+	do
+		t1[lenT1+n] = t2[n]
+	end
+
+	return t1
 end
 
-x = 75
-y = 20
-z = 65
+local jobs = splitVol({0,0,0},{25,20,53},60)
 
-xDims, yDims, zDims = splitVol(75,20,65,15)
-xDims2, yDims2, zDims2 = splitVol(xDims, yDims, zDims, 11)
+print(#jobs)
 
-print(x*y*z)
-print(xDims*yDims*zDims)
-print(xDims2*yDims2*zDims2)
-print(x,y,z)
-print(xDims,yDims,zDims)
-print(xDims2,yDims2,zDims2)
+for k = 1,#jobs,1
+do
+	print("job: " .. k)
+	print(jobs[k][1][1],jobs[k][1][2],jobs[k][1][3])
+	print(jobs[k][2][1],jobs[k][2][2],jobs[k][2][3])
+	print("Volume: " .. jobs[k][2][1]*jobs[k][2][2]*jobs[k][2][3])
+end
 
 return S
