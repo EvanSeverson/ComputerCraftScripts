@@ -120,16 +120,24 @@ function splitVol(pos,dims,sections)
 	return t1
 end
 
--- local jobs = splitVol({0,0,0},{25,20,53},60)
+-- local dims = {25,20,53}
+-- local jobs = splitVol({0,0,0},dims,60)
 --
 -- print(#jobs)
 --
+--
+-- local runningVol = 0
 -- for k = 1,#jobs,1
 -- do
 -- 	print("job: " .. k)
--- 	print(jobs[k][1][1],jobs[k][1][2],jobs[k][1][3])
--- 	print(jobs[k][2][1],jobs[k][2][2],jobs[k][2][3])
+-- 	print("Position:",jobs[k][1][1],jobs[k][1][2],jobs[k][1][3])
+-- 	print("Dimensions:",jobs[k][2][1],jobs[k][2][2],jobs[k][2][3])
 -- 	print("Volume: " .. jobs[k][2][1]*jobs[k][2][2]*jobs[k][2][3])
+-- 	runningVol = runningVol+jobs[k][2][1]*jobs[k][2][2]*jobs[k][2][3]
 -- end
+--
+-- print("Total volume: "..dims[1]*dims[2]*dims[3])
+-- print("Running volume: "..runningVol)
+-- print("Discrepency: "..dims[1]*dims[2]*dims[3]-runningVol)
 
 return S
