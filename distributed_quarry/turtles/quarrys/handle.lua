@@ -6,8 +6,7 @@ function handle(param)
 
 	if periph ~= nil
 	then
-		turtle.turnLeft()
-		return true
+		return false
 	end
 
 	if param == "front"
