@@ -86,7 +86,7 @@ function splitVol(pos,dims,sections)
 		sections1 = math.floor(sections/2)
 		bad = true
 		-- print("This is bad.")
-		return
+		-- return
 	end
 	-- print(sections,sections1)
 	-- print(pos[1],pos[2],pos[3])
@@ -120,7 +120,7 @@ function splitVol(pos,dims,sections)
 	return t1
 end
 
--- local dims = {25,20,53}
+-- local dims = {3450,262,5253}
 -- local jobs = splitVol({0,0,0},dims,60)
 --
 -- print(#jobs)
