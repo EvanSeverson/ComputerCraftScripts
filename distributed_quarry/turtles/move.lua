@@ -14,6 +14,22 @@ function tryForward()
 			break
 		end
 	end
+	return true
+end
+
+function tryBackward()
+		if turtle.getFuelLevel() == 0
+		then
+			return false
+		end
+		while not turtle.back()
+		do
+			if not handle("back")
+			then
+				break
+			end
+		end
+		return true
 end
 
 function tryUp()
@@ -28,6 +44,7 @@ function tryUp()
 			break
 		end
 	end
+	return true
 end
 
 function tryDown()
@@ -42,6 +59,7 @@ function tryDown()
 			break
 		end
 	end
+	return true
 end
 
 

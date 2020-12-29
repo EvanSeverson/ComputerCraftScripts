@@ -1,4 +1,7 @@
-moves = require("move")
+require("move")
+require("orientation")
+
+local initialOrientation = getOrientation()
 
 for n = 0,3,1
 do
@@ -10,55 +13,39 @@ do
 	end
 end
 
-orient = 0
-
-
-tryDown()
-
-for k = 0,arg[3]-1,1
+for k = 0,arg[2]-1,1
 do
-	for l = 0,arg[2]-1,1
+	for l = 0,arg[3]-1,1
 	do
 		for m = 0,arg[1]-2,1
 		do
 			tryForward()
 		end
 
-		if l < arg[2]-1
+		if l < arg[3]-1
 		then
-			if orient == 2*(k%2)
+			if (getOrientation()-initialOrientation)%4 == 2*(k%2)
 			then
-				turtle.turnRight()
+				shell.run("turn","right")
 				tryForward()
-				turtle.turnRight()
-				orient = (orient - 2)%4
+				shell.run("turn","right")
 			else
-				turtle.turnLeft()
+				shell.run("turn","left")
 				tryForward()
-				turtle.turnLeft()
-				orient = (orient + 2)%4
+				shell.run("turn","left")
 			end
 		end
 	end
-	if k ~= arg[3]-1
+	if k ~= arg[2]-1
 	then
 		tryDown()
-		turtle.turnLeft()
-		turtle.turnLeft()
-		orient = (orient + 2)%4
+		shell.run("turn","left",2)
 	end
 
 end
 
-while (orient ~= 0)
-do
-	if orient < 0
-	then
-		turtle.turnLeft()
-		orient = (orient + 1)%4
-	elseif orient > 0
-	then
-		turtle.turnRight()
-		orient = (orient - 1)%4
-	end
+if getOrientation() ~= initialOrientation
+then
+	local amount = getOrientation()-initialOrientation
+	shell.run("turn","left",amount)
 end
